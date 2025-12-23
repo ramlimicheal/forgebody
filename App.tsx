@@ -13,6 +13,10 @@ import { GoalSetting } from './components/GoalSetting';
 import { ReportsView } from './components/ReportsView';
 import { SettingsView } from './components/SettingsView';
 import { Onboarding } from './components/Onboarding';
+import { WorkoutLogger } from './components/WorkoutLogger';
+import { NutritionTracker } from './components/NutritionTracker';
+import { SocialFeed } from './components/SocialFeed';
+import { AICoach } from './components/AICoach';
 import { Reflection, ViewMode } from './types';
 import { INITIAL_REFLECTIONS } from './constants';
 
@@ -80,9 +84,17 @@ const App: React.FC = () => {
         return <GoalSetting />;
       case 'Reports':
         return <ReportsView />;
-      case 'Settings':
-        return <SettingsView darkMode={darkMode} onDarkModeToggle={() => setDarkMode(!darkMode)} />;
-      case 'Logs':
+            case 'Settings':
+              return <SettingsView darkMode={darkMode} onDarkModeToggle={() => setDarkMode(!darkMode)} />;
+            case 'Workouts':
+              return <WorkoutLogger />;
+            case 'Nutrition':
+              return <NutritionTracker />;
+            case 'Social':
+              return <SocialFeed />;
+            case 'Coach':
+              return <AICoach />;
+            case 'Logs':
         return (
           <div className="flex flex-1 h-full overflow-hidden">
             <Sidebar 

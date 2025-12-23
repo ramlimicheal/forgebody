@@ -10,14 +10,15 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange, darkMode = false, onSettingsClick }) => {
-  const navItems: { label: ViewMode; icon: string }[] = [
-    { label: 'Dashboard', icon: 'monitoring' },
-    { label: 'Trends', icon: 'trending_up' },
-    { label: 'Goals', icon: 'flag' },
-    { label: 'Reports', icon: 'assessment' },
-    { label: 'Logs', icon: 'fitness_center' },
-    { label: 'Devices', icon: 'watch' },
-  ];
+    const navItems: { label: ViewMode; icon: string }[] = [
+      { label: 'Dashboard', icon: 'monitoring' },
+      { label: 'Workouts', icon: 'fitness_center' },
+      { label: 'Nutrition', icon: 'restaurant' },
+      { label: 'Trends', icon: 'trending_up' },
+      { label: 'Social', icon: 'group' },
+      { label: 'Coach', icon: 'psychology' },
+      { label: 'Devices', icon: 'watch' },
+    ];
 
   return (
     <header className={`h-14 border-b flex items-center justify-between px-8 z-50 shrink-0 transition-colors ${

@@ -8,6 +8,9 @@ export const TrendsView: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('steps');
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
+  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareMetric, setCompareMetric] = useState<MetricType>('heartRate');
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 150);
@@ -48,24 +51,35 @@ export const TrendsView: React.FC = () => {
               Track your progress over time with data from your smartwatch
             </p>
           </div>
-          <div className="flex bg-slate-50 p-1 rounded-full border border-slate-100">
-            <button 
-              onClick={() => setTimeRange('week')}
-              className={`px-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
-                timeRange === 'week' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              Week
-            </button>
-            <button 
-              onClick={() => setTimeRange('month')}
-              className={`px-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
-                timeRange === 'month' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              Month
-            </button>
-          </div>
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => setCompareMode(!compareMode)}
+                        className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                          compareMode ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-sm">compare</span>
+                        Compare
+                      </button>
+                      <div className="flex bg-slate-50 p-1 rounded-full border border-slate-100">
+                        <button 
+                          onClick={() => setTimeRange('week')}
+                          className={`px-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
+                            timeRange === 'week' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                          }`}
+                        >
+                          Week
+                        </button>
+                        <button 
+                          onClick={() => setTimeRange('month')}
+                          className={`px-6 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
+                            timeRange === 'month' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                          }`}
+                        >
+                          Month
+                        </button>
+                      </div>
+                    </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
@@ -128,40 +142,88 @@ export const TrendsView: React.FC = () => {
             </div>
           </div>
 
-          <div className="h-64 flex items-end gap-4 px-4 relative">
-            <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-right pr-4">
-              <span className="tech-label !text-[7px]">{maxValue.toLocaleString()}</span>
-              <span className="tech-label !text-[7px]">{Math.round(maxValue / 2).toLocaleString()}</span>
-              <span className="tech-label !text-[7px]">0</span>
-            </div>
-            <div className="flex-1 flex items-end gap-4 ml-12">
-              {MOCK_TRENDS.map((data, i) => {
-                const value = data[selectedMetric];
-                const heightPercent = (value / maxValue) * 100;
-                const isMax = value === maxValue;
-                return (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-3 group cursor-help">
-                    <div className="relative w-full">
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white tech-label !text-[7px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                        {selectedMetric === 'sleep' ? value.toFixed(1) : value.toLocaleString()} {currentMetric.unit}
+                    <div className="h-64 flex items-end gap-4 px-4 relative">
+                      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-right pr-4">
+                        <span className="tech-label !text-[7px]">{maxValue.toLocaleString()}</span>
+                        <span className="tech-label !text-[7px]">{Math.round(maxValue / 2).toLocaleString()}</span>
+                        <span className="tech-label !text-[7px]">0</span>
                       </div>
-                      <div 
-                        className={`w-full rounded-t-lg transition-all duration-700 ease-out ${
-                          isMax ? 'bg-emerald-500' : currentMetric.color
-                        } group-hover:opacity-80`}
-                        style={{ 
-                          height: isLoaded ? `${heightPercent}%` : '0%',
-                          minHeight: '4px',
-                          transitionDelay: `${i * 50}ms`
-                        }}
-                      ></div>
+                      <div className="flex-1 flex items-end gap-4 ml-12">
+                        {MOCK_TRENDS.map((data, i) => {
+                          const value = data[selectedMetric];
+                          const heightPercent = (value / maxValue) * 100;
+                          const isMax = value === maxValue;
+                          const isHovered = hoveredDay === i;
+                          const compareValue = compareMode ? data[compareMetric] : 0;
+                          const compareMax = compareMode ? getMaxValue(compareMetric) : 1;
+                          const compareHeightPercent = (compareValue / compareMax) * 100;
+                          const compareMetricInfo = metrics.find(m => m.key === compareMetric);
+                
+                          return (
+                            <div 
+                              key={i} 
+                              className="flex-1 flex flex-col items-center gap-3 group cursor-pointer"
+                              onMouseEnter={() => setHoveredDay(i)}
+                              onMouseLeave={() => setHoveredDay(null)}
+                            >
+                              <div className="relative w-full h-full flex items-end justify-center gap-1">
+                                <div className={`absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-900 text-white tech-label !text-[7px] px-3 py-2 rounded-lg transition-all whitespace-nowrap z-10 ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                                  <p className="font-bold">{data.date}</p>
+                                  <p>{currentMetric.label}: {selectedMetric === 'sleep' ? value.toFixed(1) : value.toLocaleString()} {currentMetric.unit}</p>
+                                  {compareMode && compareMetricInfo && (
+                                    <p className="text-emerald-400">{compareMetricInfo.label}: {compareMetric === 'sleep' ? compareValue.toFixed(1) : compareValue.toLocaleString()} {compareMetricInfo.unit}</p>
+                                  )}
+                                </div>
+                                <div 
+                                  className={`rounded-t-lg transition-all duration-700 ease-out ${
+                                    isMax ? 'bg-emerald-500' : currentMetric.color
+                                  } ${isHovered ? 'opacity-100 scale-105' : 'opacity-90'}`}
+                                  style={{ 
+                                    height: isLoaded ? `${heightPercent}%` : '0%',
+                                    minHeight: '4px',
+                                    width: compareMode ? '45%' : '100%',
+                                    transitionDelay: `${i * 50}ms`
+                                  }}
+                                ></div>
+                                {compareMode && (
+                                  <div 
+                                    className={`rounded-t-lg transition-all duration-700 ease-out bg-emerald-500/60 ${isHovered ? 'opacity-100 scale-105' : 'opacity-70'}`}
+                                    style={{ 
+                                      height: isLoaded ? `${compareHeightPercent}%` : '0%',
+                                      minHeight: '4px',
+                                      width: '45%',
+                                      transitionDelay: `${i * 50 + 100}ms`
+                                    }}
+                                  ></div>
+                                )}
+                              </div>
+                              <span className={`tech-label !text-[8px] transition-colors ${isHovered ? 'text-slate-900' : ''}`}>{data.date}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <span className="tech-label !text-[8px]">{data.date}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          
+                    {compareMode && (
+                      <div className="flex items-center justify-center gap-8 mt-6 pt-6 border-t border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-4 h-4 rounded ${currentMetric.color}`}></div>
+                          <span className="tech-label !text-[9px]">{currentMetric.label}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-emerald-500/60"></div>
+                          <select 
+                            value={compareMetric}
+                            onChange={(e) => setCompareMetric(e.target.value as MetricType)}
+                            className="tech-label !text-[9px] bg-transparent border-none focus:outline-none cursor-pointer"
+                          >
+                            {metrics.filter(m => m.key !== selectedMetric).map(m => (
+                              <option key={m.key} value={m.key}>{m.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
