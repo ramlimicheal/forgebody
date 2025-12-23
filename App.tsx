@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { JournalEditor } from './components/JournalEditor';
@@ -7,6 +7,16 @@ import { Dashboard } from './components/Dashboard';
 import { Scheduling } from './components/Scheduling';
 import { CompetitiveAnalysis } from './components/CompetitiveAnalysis';
 import { VitalsAnalysis } from './components/VitalsAnalysis';
+import { DeviceManager } from './components/DeviceManager';
+import { TrendsView } from './components/TrendsView';
+import { GoalSetting } from './components/GoalSetting';
+import { ReportsView } from './components/ReportsView';
+import { SettingsView } from './components/SettingsView';
+import { Onboarding } from './components/Onboarding';
+import { WorkoutLogger } from './components/WorkoutLogger';
+import { NutritionTracker } from './components/NutritionTracker';
+import { SocialFeed } from './components/SocialFeed';
+import { AICoach } from './components/AICoach';
 import { Reflection, ViewMode } from './types';
 import { INITIAL_REFLECTIONS } from './constants';
 
@@ -14,6 +24,23 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewMode>('Dashboard');
   const [reflections, setReflections] = useState<Reflection[]>(INITIAL_REFLECTIONS);
   const [selectedId, setSelectedId] = useState<string>(INITIAL_REFLECTIONS[0].id);
+  const [darkMode, setDarkMode] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    return !localStorage.getItem('forgebody_onboarding_complete');
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('forgebody_onboarding_complete', 'true');
+    setShowOnboarding(false);
+  };
 
   const activeReflection = useMemo(() => {
     return reflections.find(r => r.id === selectedId) || reflections[0];
@@ -43,13 +70,31 @@ const App: React.FC = () => {
     switch (view) {
       case 'Dashboard':
         return <Dashboard />;
+      case 'Trends':
+        return <TrendsView />;
       case 'Schedule':
         return <Scheduling />;
       case 'Competitive':
         return <CompetitiveAnalysis />;
       case 'Vitals':
         return <VitalsAnalysis />;
-      case 'Logs':
+      case 'Devices':
+        return <DeviceManager />;
+      case 'Goals':
+        return <GoalSetting />;
+      case 'Reports':
+        return <ReportsView />;
+            case 'Settings':
+              return <SettingsView darkMode={darkMode} onDarkModeToggle={() => setDarkMode(!darkMode)} />;
+            case 'Workouts':
+              return <WorkoutLogger />;
+            case 'Nutrition':
+              return <NutritionTracker />;
+            case 'Social':
+              return <SocialFeed />;
+            case 'Coach':
+              return <AICoach />;
+            case 'Logs':
         return (
           <div className="flex flex-1 h-full overflow-hidden">
             <Sidebar 
@@ -83,12 +128,15 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-white flex flex-col overflow-hidden">
-      <Header currentView={view} onViewChange={setView} />
-      <main className="flex-1 overflow-hidden relative">
-        {renderContent()}
-      </main>
-    </div>
+    <>
+      {showOnboarding && <Onboarding onComplete={handleOnboardingComplete} />}
+      <div className={`w-full h-screen flex flex-col overflow-hidden transition-colors ${darkMode ? 'dark bg-slate-900' : 'bg-white'}`}>
+        <Header currentView={view} onViewChange={setView} darkMode={darkMode} onSettingsClick={() => setView('Settings')} />
+        <main className="flex-1 overflow-hidden relative">
+          {renderContent()}
+        </main>
+      </div>
+    </>
   );
 };
 
