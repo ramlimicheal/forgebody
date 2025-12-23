@@ -7,6 +7,8 @@ import { Dashboard } from './components/Dashboard';
 import { Scheduling } from './components/Scheduling';
 import { CompetitiveAnalysis } from './components/CompetitiveAnalysis';
 import { VitalsAnalysis } from './components/VitalsAnalysis';
+import { DeviceManager } from './components/DeviceManager';
+import { TrendsView } from './components/TrendsView';
 import { Reflection, ViewMode } from './types';
 import { INITIAL_REFLECTIONS } from './constants';
 
@@ -43,12 +45,16 @@ const App: React.FC = () => {
     switch (view) {
       case 'Dashboard':
         return <Dashboard />;
+      case 'Trends':
+        return <TrendsView />;
       case 'Schedule':
         return <Scheduling />;
       case 'Competitive':
         return <CompetitiveAnalysis />;
       case 'Vitals':
         return <VitalsAnalysis />;
+      case 'Devices':
+        return <DeviceManager />;
       case 'Logs':
         return (
           <div className="flex flex-1 h-full overflow-hidden">

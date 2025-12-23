@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { MOCK_STATS } from '../constants';
+import { HydrationTracker } from './HydrationTracker';
+import { ReadinessBreakdown } from './ReadinessBreakdown';
 
 export const Dashboard: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -136,8 +138,10 @@ export const Dashboard: React.FC = () => {
             </section>
           </div>
 
-          <aside className="lg:col-span-4">
-             <div className="flex items-center justify-between mb-10">
+          <aside className="lg:col-span-4 space-y-12">
+            <HydrationTracker />
+            <div>
+              <div className="flex items-center justify-between mb-10">
                 <h2 className="tech-label !text-[10px]">Load Schedule</h2>
               </div>
               <div className="space-y-10">
@@ -158,6 +162,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                 ))}
               </div>
+            </div>
           </aside>
         </div>
       </div>

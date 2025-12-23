@@ -10,10 +10,11 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   const navItems: { label: ViewMode; icon: string }[] = [
     { label: 'Dashboard', icon: 'monitoring' },
+    { label: 'Trends', icon: 'trending_up' },
     { label: 'Schedule', icon: 'event_repeat' },
     { label: 'Logs', icon: 'fitness_center' },
-    { label: 'Competitive', icon: 'leaderboard' },
     { label: 'Vitals', icon: 'ecg_heart' },
+    { label: 'Devices', icon: 'watch' },
   ];
 
   return (

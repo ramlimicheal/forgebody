@@ -1,5 +1,5 @@
 
-import { Reflection, Task, HumanStats } from './types';
+import { Reflection, Task, HumanStats, HydrationData, ReadinessContributor, ConnectedDevice, TrendData } from './types';
 
 export const INITIAL_REFLECTIONS: Reflection[] = [
   {
@@ -48,3 +48,68 @@ export const MOCK_VITALS = {
   ],
   telemetryHistory: [42, 43, 41, 44, 42, 42, 41, 45, 42]
 };
+
+export const MOCK_HYDRATION: HydrationData = {
+  current: 1800,
+  goal: 2500,
+  history: [2200, 1900, 2400, 2100, 1800, 2300, 1800],
+  lastIntake: '10:45 AM'
+};
+
+export const MOCK_READINESS_CONTRIBUTORS: ReadinessContributor[] = [
+  { label: 'Sleep Quality', value: 92, status: 'optimal', icon: 'bedtime' },
+  { label: 'Heart Rate', value: 88, status: 'optimal', icon: 'favorite' },
+  { label: 'Activity Balance', value: 85, status: 'good', icon: 'directions_run' },
+  { label: 'Recovery Time', value: 78, status: 'good', icon: 'refresh' },
+  { label: 'Step Count', value: 95, status: 'optimal', icon: 'footprint' },
+  { label: 'Hydration', value: 72, status: 'fair', icon: 'water_drop' }
+];
+
+export const MOCK_DEVICES: ConnectedDevice[] = [
+  { 
+    id: 'd1', 
+    name: 'Mi Band 8', 
+    brand: 'Xiaomi', 
+    type: 'band', 
+    connected: true, 
+    lastSync: '2 min ago',
+    batteryLevel: 78
+  },
+  { 
+    id: 'd2', 
+    name: 'Amazfit GTR 4', 
+    brand: 'Amazfit', 
+    type: 'smartwatch', 
+    connected: true, 
+    lastSync: '15 min ago',
+    batteryLevel: 45
+  },
+  { 
+    id: 'd3', 
+    name: 'Fitbit Inspire 3', 
+    brand: 'Fitbit', 
+    type: 'band', 
+    connected: false, 
+    lastSync: '2 days ago'
+  }
+];
+
+export const MOCK_TRENDS: TrendData[] = [
+  { date: 'Mon', steps: 8420, heartRate: 68, sleep: 7.2, hydration: 2200 },
+  { date: 'Tue', steps: 12350, heartRate: 72, sleep: 6.8, hydration: 1900 },
+  { date: 'Wed', steps: 6890, heartRate: 65, sleep: 8.1, hydration: 2400 },
+  { date: 'Thu', steps: 9200, heartRate: 70, sleep: 7.5, hydration: 2100 },
+  { date: 'Fri', steps: 11500, heartRate: 74, sleep: 6.5, hydration: 1800 },
+  { date: 'Sat', steps: 15200, heartRate: 78, sleep: 7.8, hydration: 2300 },
+  { date: 'Sun', steps: 7800, heartRate: 66, sleep: 8.5, hydration: 1800 }
+];
+
+export const SUPPORTED_DEVICES = [
+  { brand: 'Xiaomi', models: ['Mi Band 7', 'Mi Band 8', 'Mi Band 8 Pro', 'Redmi Watch 3'] },
+  { brand: 'Amazfit', models: ['GTR 4', 'GTS 4', 'Bip 5', 'Band 7', 'T-Rex 2'] },
+  { brand: 'Fitbit', models: ['Inspire 3', 'Charge 6', 'Versa 4', 'Sense 2'] },
+  { brand: 'Samsung', models: ['Galaxy Fit 3', 'Galaxy Watch FE'] },
+  { brand: 'Huawei', models: ['Band 8', 'Band 9', 'Watch Fit 3'] },
+  { brand: 'Realme', models: ['Band 2', 'Watch 3 Pro'] },
+  { brand: 'Honor', models: ['Band 7', 'Watch 4'] }
+];

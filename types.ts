@@ -18,8 +18,6 @@ export interface Task {
   prepContext?: string;
 }
 
-export type ViewMode = 'Dashboard' | 'Schedule' | 'Logs' | 'Vitals' | 'Competitive';
-
 export interface HumanStats {
   readiness: number;
   strengthIndex: number;
@@ -33,3 +31,37 @@ export interface Benchmark {
   eliteValue: number;
   unit: string;
 }
+
+export interface HydrationData {
+  current: number;
+  goal: number;
+  history: number[];
+  lastIntake: string;
+}
+
+export interface ReadinessContributor {
+  label: string;
+  value: number;
+  status: 'optimal' | 'good' | 'fair' | 'low';
+  icon: string;
+}
+
+export interface ConnectedDevice {
+  id: string;
+  name: string;
+  brand: string;
+  type: 'smartwatch' | 'band' | 'scale';
+  connected: boolean;
+  lastSync: string;
+  batteryLevel?: number;
+}
+
+export interface TrendData {
+  date: string;
+  steps: number;
+  heartRate: number;
+  sleep: number;
+  hydration: number;
+}
+
+export type ViewMode = 'Dashboard' | 'Schedule' | 'Logs' | 'Vitals' | 'Competitive' | 'Devices' | 'Trends';
