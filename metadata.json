@@ -1,0 +1,8 @@
+{
+  "name": "ForgeBody | Human Performance OS",
+  "description": "High-fidelity biometric tracking, training periodization, and physiological reflection system.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
