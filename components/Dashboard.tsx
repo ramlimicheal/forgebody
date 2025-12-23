@@ -100,6 +100,7 @@ export const Dashboard: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-8 space-y-16">
+            <ReadinessBreakdown />
             <section>
               <div className="flex items-center justify-between mb-10">
                 <h2 className="tech-label !text-[10px]">Neural-Physical Insights</h2>

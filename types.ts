@@ -64,4 +64,4 @@ export interface TrendData {
   hydration: number;
 }
 
-export type ViewMode = 'Dashboard' | 'Schedule' | 'Logs' | 'Vitals' | 'Competitive' | 'Devices' | 'Trends';
+export type ViewMode = 'Dashboard' | 'Schedule' | 'Logs' | 'Vitals' | 'Competitive' | 'Devices' | 'Trends' | 'Goals' | 'Reports' | 'Settings';
