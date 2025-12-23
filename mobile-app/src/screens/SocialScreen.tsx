@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
@@ -87,11 +88,13 @@ const MOCK_ACTIVITIES: Activity[] = [
   },
 ];
 
-const MOCK_CHALLENGES: Challenge[] = [
+type ChallengeIconName = 'shoe-print' | 'arm-flex' | 'water';
+
+const MOCK_CHALLENGES: (Omit<Challenge, 'icon'> & { iconName: ChallengeIconName })[] = [
   {
     id: '1',
     name: 'December Step Challenge',
-    icon: '👟',
+    iconName: 'shoe-print',
     participants: 1234,
     progress: 245000,
     goal: 300000,
@@ -101,7 +104,7 @@ const MOCK_CHALLENGES: Challenge[] = [
   {
     id: '2',
     name: 'Workout Warrior',
-    icon: '💪',
+    iconName: 'arm-flex',
     participants: 567,
     progress: 16,
     goal: 20,
@@ -111,7 +114,7 @@ const MOCK_CHALLENGES: Challenge[] = [
   {
     id: '3',
     name: 'Hydration Hero',
-    icon: '💧',
+    iconName: 'water',
     participants: 890,
     progress: 18,
     goal: 25,
@@ -137,11 +140,11 @@ function ActivityCard({ activity }: { activity: Activity }) {
     challenge: '#EC4899',
   };
 
-  const typeIcons = {
-    workout: '💪',
-    achievement: '🏆',
-    milestone: '🎯',
-    challenge: '🔥',
+  const typeIcons: Record<Activity['type'], 'arm-flex' | 'trophy' | 'target' | 'fire'> = {
+    workout: 'arm-flex',
+    achievement: 'trophy',
+    milestone: 'target',
+    challenge: 'fire',
   };
 
   return (
@@ -163,34 +166,34 @@ function ActivityCard({ activity }: { activity: Activity }) {
           </View>
           <Text style={styles.activityTime}>{activity.time}</Text>
         </View>
-        <Text style={styles.activityIcon}>{typeIcons[activity.type]}</Text>
+        <MaterialCommunityIcons name={typeIcons[activity.type]} size={24} color={typeColors[activity.type]} />
       </View>
       <Text style={styles.activityTitle}>{activity.title}</Text>
       <Text style={styles.activityDescription}>{activity.description}</Text>
       <View style={styles.activityActions}>
         <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionIcon}>❤️</Text>
+          <Feather name="heart" size={18} color={Colors.textSecondary} />
           <Text style={styles.actionCount}>{activity.likes}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionIcon}>💬</Text>
+          <Feather name="message-circle" size={18} color={Colors.textSecondary} />
           <Text style={styles.actionCount}>{activity.comments}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionIcon}>↗️</Text>
+          <Feather name="share" size={18} color={Colors.textSecondary} />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-function ChallengeCard({ challenge }: { challenge: Challenge }) {
+function ChallengeCard({ challenge }: { challenge: typeof MOCK_CHALLENGES[0] }) {
   const progress = (challenge.progress / challenge.goal) * 100;
 
   return (
     <TouchableOpacity style={styles.challengeCard}>
       <View style={styles.challengeHeader}>
-        <Text style={styles.challengeIcon}>{challenge.icon}</Text>
+        <MaterialCommunityIcons name={challenge.iconName} size={32} color={Colors.accent} style={styles.challengeIcon} />
         <View style={styles.challengeInfo}>
           <Text style={styles.challengeName}>{challenge.name}</Text>
           <Text style={styles.challengeParticipants}>

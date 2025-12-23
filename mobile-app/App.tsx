@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Feather } from '@expo/vector-icons';
 import {
   DashboardScreen,
   WorkoutsScreen,
@@ -14,21 +15,27 @@ import { Colors, FontSizes, Spacing } from './src/constants/colors';
 
 const Tab = createBottomTabNavigator();
 
+type FeatherIconName = 'activity' | 'target' | 'coffee' | 'users' | 'cpu' | 'watch' | 'smartphone';
+
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    Dashboard: '📊',
-    Workouts: '💪',
-    Nutrition: '🍎',
-    Social: '👥',
-    Coach: '🧠',
-    Devices: '⌚',
+  const icons: Record<string, FeatherIconName> = {
+    Dashboard: 'activity',
+    Workouts: 'target',
+    Nutrition: 'coffee',
+    Social: 'users',
+    Coach: 'cpu',
+    Devices: 'watch',
   };
+
+  const iconName = icons[name] || 'smartphone';
 
   return (
     <View style={[styles.tabIconContainer, focused && styles.tabIconContainerActive]}>
-      <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>
-        {icons[name] || '📱'}
-      </Text>
+      <Feather 
+        name={iconName} 
+        size={20} 
+        color={focused ? Colors.accent : Colors.textMuted} 
+      />
     </View>
   );
 }
@@ -38,7 +45,7 @@ function Header() {
     <View style={styles.header}>
       <View style={styles.logoContainer}>
         <View style={styles.logoIcon}>
-          <Text style={styles.logoIconText}>⚡</Text>
+          <Feather name="zap" size={18} color="#FFFFFF" />
         </View>
         <Text style={styles.logoText}>FORGEBODY</Text>
       </View>
@@ -162,12 +169,5 @@ const styles = StyleSheet.create({
   },
   tabIconContainerActive: {
     backgroundColor: Colors.accentLight,
-  },
-  tabIcon: {
-    fontSize: 18,
-    opacity: 0.6,
-  },
-  tabIconActive: {
-    opacity: 1,
   },
 });

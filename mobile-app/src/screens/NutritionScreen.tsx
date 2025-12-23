@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
@@ -27,31 +28,33 @@ interface MealGroup {
   meals: Meal[];
 }
 
-const MOCK_MEALS: MealGroup[] = [
+type MealIconName = 'weather-sunset-up' | 'white-balance-sunny' | 'weather-night' | 'cookie';
+
+const MOCK_MEALS: (Omit<MealGroup, 'icon'> & { iconName: MealIconName })[] = [
   {
     type: 'breakfast',
-    icon: '🌅',
+    iconName: 'weather-sunset-up',
     meals: [
       { id: '1', name: 'Oatmeal with Banana & Almonds', time: '07:30', calories: 420, protein: 15, carbs: 65, fat: 12 },
     ],
   },
   {
     type: 'lunch',
-    icon: '☀️',
+    iconName: 'white-balance-sunny',
     meals: [
       { id: '2', name: 'Grilled Chicken Salad', time: '13:00', calories: 550, protein: 45, carbs: 25, fat: 28 },
     ],
   },
   {
     type: 'dinner',
-    icon: '🌙',
+    iconName: 'weather-night',
     meals: [
       { id: '3', name: 'Salmon with Rice & Vegetables', time: '19:30', calories: 500, protein: 34, carbs: 65, fat: 14 },
     ],
   },
   {
     type: 'snack',
-    icon: '🍪',
+    iconName: 'cookie',
     meals: [
       { id: '4', name: 'Protein Shake', time: '10:00', calories: 180, protein: 30, carbs: 8, fat: 3 },
       { id: '5', name: 'Greek Yogurt with Berries', time: '16:00', calories: 200, protein: 18, carbs: 22, fat: 5 },
@@ -106,14 +109,14 @@ function MacroCard({
   );
 }
 
-function MealGroupCard({ group }: { group: MealGroup }) {
+function MealGroupCard({ group }: { group: typeof MOCK_MEALS[0] }) {
   const totalCalories = group.meals.reduce((sum, meal) => sum + meal.calories, 0);
 
   return (
     <View style={styles.mealGroupCard}>
       <View style={styles.mealGroupHeader}>
         <View style={styles.mealGroupLeft}>
-          <Text style={styles.mealGroupIcon}>{group.icon}</Text>
+          <MaterialCommunityIcons name={group.iconName} size={24} color={Colors.accent} style={styles.mealGroupIcon} />
           <View>
             <Text style={styles.mealGroupType}>
               {group.type.charAt(0).toUpperCase() + group.type.slice(1)}

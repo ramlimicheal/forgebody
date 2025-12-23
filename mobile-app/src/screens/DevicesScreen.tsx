@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
@@ -43,60 +44,62 @@ const CONNECTED_DEVICES: ConnectedDevice[] = [
   },
 ];
 
-const SUPPORTED_BRANDS: SupportedBrand[] = [
+type BrandIconName = 'watch-variant' | 'fire' | 'sail-boat' | 'music' | 'circle-outline' | 'run' | 'heart-pulse' | 'cellphone';
+
+const SUPPORTED_BRANDS: (Omit<SupportedBrand, 'logo'> & { iconName: BrandIconName })[] = [
   {
     id: '1',
     name: 'Xiaomi',
-    logo: '⌚',
+    iconName: 'watch-variant',
     models: ['Mi Band 8', 'Mi Band 7', 'Mi Band 6', 'Redmi Watch 3', 'Redmi Watch 2'],
     popular: true,
   },
   {
     id: '2',
     name: 'Fire-Boltt',
-    logo: '🔥',
+    iconName: 'fire',
     models: ['Phoenix Pro', 'Ninja Call Pro', 'Ring 3', 'Visionary', 'Thunder'],
     popular: true,
   },
   {
     id: '3',
     name: 'boAt',
-    logo: '⛵',
+    iconName: 'sail-boat',
     models: ['Wave Lite', 'Storm Pro', 'Xtend Plus', 'Flash Edition', 'Primia'],
     popular: true,
   },
   {
     id: '4',
     name: 'Noise',
-    logo: '🎵',
+    iconName: 'music',
     models: ['ColorFit Pro 4', 'ColorFit Ultra 3', 'Pulse 2 Max', 'Icon 3', 'Twist Go'],
     popular: true,
   },
   {
     id: '5',
     name: 'Pebble',
-    logo: '🪨',
+    iconName: 'circle-outline',
     models: ['Cosmos Luxe', 'Alive', 'Frost', 'Pace Pro', 'Vienna'],
     popular: false,
   },
   {
     id: '6',
     name: 'Amazfit',
-    logo: '🏃',
+    iconName: 'run',
     models: ['GTR 4', 'GTS 4', 'Bip 3', 'Band 7', 'T-Rex 2'],
     popular: false,
   },
   {
     id: '7',
     name: 'Fitbit',
-    logo: '💚',
+    iconName: 'heart-pulse',
     models: ['Charge 6', 'Versa 4', 'Sense 2', 'Inspire 3', 'Luxe'],
     popular: false,
   },
   {
     id: '8',
     name: 'Realme',
-    logo: '📱',
+    iconName: 'cellphone',
     models: ['Watch 3 Pro', 'Watch S100', 'Band 2', 'TechLife Watch R100'],
     popular: false,
   },
@@ -109,17 +112,17 @@ function ConnectedDeviceCard({ device }: { device: ConnectedDevice }) {
     disconnected: Colors.error,
   };
 
-  const typeIcons = {
-    smartwatch: '⌚',
-    phone: '📱',
-    scale: '⚖️',
+  const typeIcons: Record<ConnectedDevice['type'], 'watch-variant' | 'cellphone' | 'scale-bathroom'> = {
+    smartwatch: 'watch-variant',
+    phone: 'cellphone',
+    scale: 'scale-bathroom',
   };
 
   return (
     <View style={styles.deviceCard}>
       <View style={styles.deviceHeader}>
         <View style={styles.deviceIconContainer}>
-          <Text style={styles.deviceIcon}>{typeIcons[device.type]}</Text>
+          <MaterialCommunityIcons name={typeIcons[device.type]} size={28} color={Colors.accent} />
         </View>
         <View style={styles.deviceInfo}>
           <Text style={styles.deviceName}>{device.name}</Text>
@@ -134,11 +137,11 @@ function ConnectedDeviceCard({ device }: { device: ConnectedDevice }) {
       </View>
       <View style={styles.deviceMeta}>
         <View style={styles.metaItem}>
-          <Text style={styles.metaIcon}>🔋</Text>
+          <Feather name="battery" size={16} color={Colors.textSecondary} />
           <Text style={styles.metaText}>{device.battery}%</Text>
         </View>
         <View style={styles.metaItem}>
-          <Text style={styles.metaIcon}>🔄</Text>
+          <Feather name="refresh-cw" size={16} color={Colors.textSecondary} />
           <Text style={styles.metaText}>{device.lastSync}</Text>
         </View>
       </View>
@@ -156,10 +159,10 @@ function ConnectedDeviceCard({ device }: { device: ConnectedDevice }) {
   );
 }
 
-function BrandCard({ brand, onPress }: { brand: SupportedBrand; onPress: () => void }) {
+function BrandCard({ brand, onPress }: { brand: typeof SUPPORTED_BRANDS[0]; onPress: () => void }) {
   return (
     <TouchableOpacity style={styles.brandCard} onPress={onPress}>
-      <Text style={styles.brandLogo}>{brand.logo}</Text>
+      <MaterialCommunityIcons name={brand.iconName} size={32} color={Colors.accent} />
       <Text style={styles.brandName}>{brand.name}</Text>
       <Text style={styles.brandModels}>{brand.models.length} models</Text>
       {brand.popular && (
@@ -172,7 +175,7 @@ function BrandCard({ brand, onPress }: { brand: SupportedBrand; onPress: () => v
 }
 
 export default function DevicesScreen() {
-  const [selectedBrand, setSelectedBrand] = useState<SupportedBrand | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<typeof SUPPORTED_BRANDS[0] | null>(null);
 
   return (
     <View style={styles.container}>
@@ -269,7 +272,7 @@ export default function DevicesScreen() {
 
         <View style={[styles.section, styles.lastSection]}>
           <View style={styles.infoCard}>
-            <Text style={styles.infoIcon}>💡</Text>
+            <MaterialCommunityIcons name="lightbulb-on" size={32} color={Colors.accent} style={styles.infoIcon} />
             <Text style={styles.infoTitle}>No Smartwatch? No Problem!</Text>
             <Text style={styles.infoText}>
               ForgeBody can track steps, distance, and active minutes using just your phone's
@@ -283,7 +286,7 @@ export default function DevicesScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalLogo}>{selectedBrand.logo}</Text>
+              <MaterialCommunityIcons name={selectedBrand.iconName} size={32} color={Colors.accent} style={styles.modalLogo} />
               <Text style={styles.modalTitle}>{selectedBrand.name}</Text>
               <TouchableOpacity
                 style={styles.modalClose}

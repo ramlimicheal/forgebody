@@ -7,11 +7,14 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { healthService, DailySummary } from '../services/health';
 import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - Spacing.lg * 2 - Spacing.md) / 2;
+
+type IconName = 'foot-print' | 'clock-outline' | 'sleep' | 'water-outline';
 
 function StatCard({
   title,
@@ -19,19 +22,19 @@ function StatCard({
   unit,
   progress,
   color = Colors.accent,
-  icon,
+  iconName,
 }: {
   title: string;
   value: string | number;
   unit: string;
   progress?: number;
   color?: string;
-  icon: string;
+  iconName: IconName;
 }) {
   return (
     <View style={[styles.statCard, { width: CARD_WIDTH }]}>
       <View style={styles.statHeader}>
-        <Text style={styles.statIcon}>{icon}</Text>
+        <MaterialCommunityIcons name={iconName} size={18} color={color} style={styles.statIcon} />
         <Text style={styles.statTitle}>{title}</Text>
       </View>
       <View style={styles.statValueRow}>
@@ -85,13 +88,15 @@ function ReadinessRing({ score }: { score: number }) {
   );
 }
 
+type ContributorIconName = 'sleep' | 'heart-pulse' | 'run' | 'restore' | 'foot-print' | 'water-outline';
+
 function ContributorItem({
-  icon,
+  iconName,
   label,
   value,
   status,
 }: {
-  icon: string;
+  iconName: ContributorIconName;
   label: string;
   value: number;
   status: 'optimal' | 'good' | 'fair' | 'poor';
@@ -106,7 +111,7 @@ function ContributorItem({
   return (
     <View style={styles.contributorItem}>
       <View style={styles.contributorLeft}>
-        <Text style={styles.contributorIcon}>{icon}</Text>
+        <MaterialCommunityIcons name={iconName} size={18} color={Colors.textSecondary} style={styles.contributorIcon} />
         <Text style={styles.contributorLabel}>{label}</Text>
       </View>
       <View style={styles.contributorRight}>
@@ -143,7 +148,7 @@ export default function DashboardScreen() {
     return (
       <View style={styles.loadingContainer}>
         <View style={styles.loadingSpinner}>
-          <Text style={styles.loadingIcon}>⚡</Text>
+          <Feather name="zap" size={28} color="#FFFFFF" />
         </View>
         <Text style={styles.loadingText}>Syncing health data...</Text>
       </View>
@@ -170,7 +175,7 @@ export default function DashboardScreen() {
 
       <View style={styles.statsGrid}>
         <StatCard
-          icon="👟"
+          iconName="foot-print"
           title="STEPS"
           value={(summary?.steps || 8420).toLocaleString()}
           unit={`/ ${(summary?.stepsGoal || 10000).toLocaleString()}`}
@@ -178,7 +183,7 @@ export default function DashboardScreen() {
           color={Colors.accent}
         />
         <StatCard
-          icon="⏱️"
+          iconName="clock-outline"
           title="ACTIVE"
           value={summary?.activeMinutes || 45}
           unit={`/ ${summary?.activeMinutesGoal || 60} min`}
@@ -186,7 +191,7 @@ export default function DashboardScreen() {
           color={Colors.warning}
         />
         <StatCard
-          icon="😴"
+          iconName="sleep"
           title="SLEEP"
           value={summary?.sleepHours?.toFixed(1) || '7.2'}
           unit={`/ ${summary?.sleepGoal || 8} hrs`}
@@ -194,7 +199,7 @@ export default function DashboardScreen() {
           color="#6366F1"
         />
         <StatCard
-          icon="💧"
+          iconName="water-outline"
           title="HYDRATION"
           value={((summary?.hydrationMl || 1800) / 1000).toFixed(1)}
           unit={`/ ${(summary?.hydrationGoal || 2500) / 1000}L`}
@@ -211,12 +216,12 @@ export default function DashboardScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>CONTRIBUTORS</Text>
         <View style={styles.contributorsCard}>
-          <ContributorItem icon="😴" label="Sleep Quality" value={92} status="optimal" />
-          <ContributorItem icon="❤️" label="Heart Rate" value={88} status="optimal" />
-          <ContributorItem icon="🏃" label="Activity Balance" value={85} status="good" />
-          <ContributorItem icon="🔄" label="Recovery Time" value={78} status="good" />
-          <ContributorItem icon="👟" label="Step Count" value={95} status="optimal" />
-          <ContributorItem icon="💧" label="Hydration" value={72} status="fair" />
+          <ContributorItem iconName="sleep" label="Sleep Quality" value={92} status="optimal" />
+          <ContributorItem iconName="heart-pulse" label="Heart Rate" value={88} status="optimal" />
+          <ContributorItem iconName="run" label="Activity Balance" value={85} status="good" />
+          <ContributorItem iconName="restore" label="Recovery Time" value={78} status="good" />
+          <ContributorItem iconName="foot-print" label="Step Count" value={95} status="optimal" />
+          <ContributorItem iconName="water-outline" label="Hydration" value={72} status="fair" />
         </View>
       </View>
 
@@ -224,19 +229,19 @@ export default function DashboardScreen() {
         <Text style={styles.sectionTitle}>QUICK ACTIONS</Text>
         <View style={styles.actionsGrid}>
           <TouchableOpacity style={styles.actionCard}>
-            <Text style={styles.actionIcon}>💧</Text>
+            <Feather name="droplet" size={24} color={Colors.accent} />
             <Text style={styles.actionLabel}>Log Water</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionCard}>
-            <Text style={styles.actionIcon}>🏋️</Text>
+            <Feather name="target" size={24} color={Colors.accent} />
             <Text style={styles.actionLabel}>Start Workout</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionCard}>
-            <Text style={styles.actionIcon}>🍎</Text>
+            <Feather name="coffee" size={24} color={Colors.accent} />
             <Text style={styles.actionLabel}>Log Meal</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionCard}>
-            <Text style={styles.actionIcon}>📊</Text>
+            <Feather name="trending-up" size={24} color={Colors.accent} />
             <Text style={styles.actionLabel}>View Trends</Text>
           </TouchableOpacity>
         </View>
@@ -246,7 +251,7 @@ export default function DashboardScreen() {
         <Text style={styles.sectionTitle}>AI INSIGHT</Text>
         <View style={styles.insightCard}>
           <View style={styles.insightHeader}>
-            <Text style={styles.insightIcon}>🧠</Text>
+            <Feather name="cpu" size={20} color={Colors.accent} style={styles.insightIcon} />
             <View style={styles.insightBadge}>
               <Text style={styles.insightBadgeText}>RECOMMENDATION</Text>
             </View>
@@ -366,7 +371,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   statIcon: {
-    fontSize: 16,
     marginRight: Spacing.xs,
   },
   statTitle: {
@@ -472,7 +476,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   contributorIcon: {
-    fontSize: 16,
     marginRight: Spacing.sm,
   },
   contributorLabel: {
@@ -507,7 +510,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionIcon: {
-    fontSize: 24,
     marginBottom: Spacing.xs,
   },
   actionLabel: {
@@ -529,7 +531,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   insightIcon: {
-    fontSize: 20,
     marginRight: Spacing.sm,
   },
   insightBadge: {
