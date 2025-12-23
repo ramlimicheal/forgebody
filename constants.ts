@@ -105,11 +105,12 @@ export const MOCK_TRENDS: TrendData[] = [
 ];
 
 export const SUPPORTED_DEVICES = [
-  { brand: 'Xiaomi', models: ['Mi Band 7', 'Mi Band 8', 'Mi Band 8 Pro', 'Redmi Watch 3'] },
+  { brand: 'Xiaomi', models: ['Mi Band 7', 'Mi Band 8', 'Mi Band 8 Pro', 'Redmi Watch 3', 'Redmi Watch 4'] },
+  { brand: 'Fire-Boltt', models: ['Phoenix Pro', 'Ninja Call Pro', 'Ring 3', 'Gladiator', 'Invincible Plus'] },
+  { brand: 'boAt', models: ['Wave Lite', 'Storm Call', 'Xtend Plus', 'Lunar Connect', 'Wave Neo'] },
+  { brand: 'Noise', models: ['ColorFit Pro 5', 'Pulse 2 Max', 'Icon 3', 'Twist Go', 'ColorFit Ultra 3'] },
+  { brand: 'Pebble', models: ['Cosmos Luxe', 'Frost', 'Alive', 'Spark'] },
   { brand: 'Amazfit', models: ['GTR 4', 'GTS 4', 'Bip 5', 'Band 7', 'T-Rex 2'] },
   { brand: 'Fitbit', models: ['Inspire 3', 'Charge 6', 'Versa 4', 'Sense 2'] },
-  { brand: 'Samsung', models: ['Galaxy Fit 3', 'Galaxy Watch FE'] },
-  { brand: 'Huawei', models: ['Band 8', 'Band 9', 'Watch Fit 3'] },
-  { brand: 'Realme', models: ['Band 2', 'Watch 3 Pro'] },
-  { brand: 'Honor', models: ['Band 7', 'Watch 4'] }
+  { brand: 'Realme', models: ['Band 2', 'Watch 3 Pro', 'Watch S2'] }
 ];
