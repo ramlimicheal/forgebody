@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
+import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -347,29 +347,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingTop: Spacing.xl,
   },
   headerLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    color: Colors.accent,
-    letterSpacing: 2,
-    marginBottom: 2,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
   },
   headerTitle: {
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.xxl,
     fontWeight: '800',
-    fontStyle: 'italic',
     color: Colors.primary,
   },
   aiActiveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.accentLight,
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.sm,
+    backgroundColor: Colors.accentMuted,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,
   },
   aiActiveDot: {
@@ -377,7 +373,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: Colors.accent,
-    marginRight: Spacing.xs,
+    marginRight: Spacing.sm,
   },
   aiActiveText: {
     fontSize: FontSizes.xs,
@@ -387,7 +383,8 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
     gap: Spacing.sm,
   },
   tab: {
@@ -397,7 +394,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   activeTab: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
   },
   tabText: {
     fontSize: FontSizes.sm,
@@ -412,10 +409,9 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.lg,
     fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 2,
+    color: Colors.primary,
     marginBottom: Spacing.md,
   },
   todayFocus: {
@@ -423,8 +419,9 @@ const styles = StyleSheet.create({
   },
   focusCard: {
     backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.xxl,
     padding: Spacing.lg,
+    ...Shadows.lg,
   },
   focusItem: {
     flexDirection: 'row',
@@ -448,11 +445,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xxl,
   },
   insightCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     borderLeftWidth: 4,
+    ...Shadows.md,
   },
   insightHeader: {
     flexDirection: 'row',
@@ -500,9 +498,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   actionButton: {
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
     alignSelf: 'flex-start',
   },
   actionButtonText: {
@@ -541,7 +539,7 @@ const styles = StyleSheet.create({
   },
   bubbleContent: {
     maxWidth: '80%',
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.md,
   },
   userBubbleContent: {

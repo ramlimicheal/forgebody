@@ -11,7 +11,7 @@ import {
   CoachScreen,
   DevicesScreen,
 } from './src/screens';
-import { Colors, FontSizes, Spacing } from './src/constants/colors';
+import { Colors, FontSizes, Spacing, BorderRadius } from './src/constants/colors';
 
 const Tab = createBottomTabNavigator();
 
@@ -97,9 +97,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    backgroundColor: Colors.background,
   },
   logoContainer: {
     flexDirection: 'row',
@@ -107,10 +105,10 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   logoIcon: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     backgroundColor: Colors.accent,
-    borderRadius: 8,
+    borderRadius: BorderRadius.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -126,11 +124,11 @@ const styles = StyleSheet.create({
   syncStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.accentLight,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: 20,
-    gap: Spacing.xs,
+    backgroundColor: Colors.accentMuted,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    gap: Spacing.sm,
   },
   syncDot: {
     width: 8,
@@ -145,29 +143,30 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   tabBar: {
-    backgroundColor: Colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingTop: Spacing.xs,
-    paddingBottom: Spacing.sm,
-    height: 70,
+    backgroundColor: Colors.background,
+    borderTopWidth: 0,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.md,
+    height: 72,
+    elevation: 0,
+    shadowOpacity: 0,
   },
   tabBarLabel: {
     fontSize: 10,
     fontWeight: '600',
-    marginTop: 2,
+    marginTop: Spacing.xs,
   },
   tabBarItem: {
-    paddingVertical: 4,
+    paddingVertical: Spacing.xs,
   },
   tabIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   tabIconContainerActive: {
-    backgroundColor: Colors.accentLight,
+    backgroundColor: Colors.accentMuted,
   },
 });

@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
+import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -327,28 +327,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingTop: Spacing.xl,
   },
   headerLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    color: Colors.accent,
-    letterSpacing: 2,
-    marginBottom: 2,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
   },
   headerTitle: {
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.xxl,
     fontWeight: '800',
-    fontStyle: 'italic',
     color: Colors.primary,
   },
   addButton: {
     backgroundColor: Colors.accent,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
   },
   addButtonText: {
     fontSize: FontSizes.sm,
@@ -365,10 +361,9 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxl,
   },
   sectionTitle: {
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.lg,
     fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 2,
+    color: Colors.primary,
     marginBottom: Spacing.sm,
   },
   sectionSubtitle: {
@@ -377,10 +372,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   deviceCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
+    ...Shadows.md,
   },
   deviceHeader: {
     flexDirection: 'row',
@@ -474,8 +470,8 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
   addDeviceCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
     alignItems: 'center',
     borderWidth: 2,
@@ -504,10 +500,11 @@ const styles = StyleSheet.create({
   },
   brandCard: {
     width: (width - Spacing.lg * 2 - Spacing.md * 3) / 4,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.md,
     alignItems: 'center',
+    ...Shadows.sm,
   },
   brandLogo: {
     fontSize: 28,
@@ -538,9 +535,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   howItWorksCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
+    ...Shadows.md,
   },
   stepItem: {
     flexDirection: 'row',
@@ -575,8 +573,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   infoCard: {
-    backgroundColor: Colors.accentLight,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.accentMuted,
+    borderRadius: BorderRadius.xxl,
     padding: Spacing.lg,
     alignItems: 'center',
   },

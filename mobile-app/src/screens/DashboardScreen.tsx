@@ -8,13 +8,72 @@ import {
   Dimensions,
 } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import Svg, { Circle, G } from 'react-native-svg';
 import { healthService, DailySummary } from '../services/health';
-import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
+import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - Spacing.lg * 2 - Spacing.md) / 2;
 
-type IconName = 'foot-print' | 'clock-outline' | 'sleep' | 'water-outline';
+type StatIconName = 'foot-print' | 'clock-outline' | 'sleep' | 'water-outline';
+
+function CircularProgress({
+  progress,
+  size = 80,
+  strokeWidth = 8,
+  color = Colors.accent,
+  showDots = true,
+}: {
+  progress: number;
+  size?: number;
+  strokeWidth?: number;
+  color?: string;
+  showDots?: boolean;
+}) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const progressOffset = circumference - (progress / 100) * circumference;
+  const center = size / 2;
+
+  return (
+    <View style={{ width: size, height: size }}>
+      <Svg width={size} height={size}>
+        <G rotation="-90" origin={`${center}, ${center}`}>
+          {showDots ? (
+            <Circle
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke={Colors.progressTrack}
+              strokeWidth={strokeWidth}
+              fill="none"
+              strokeDasharray="4 4"
+            />
+          ) : (
+            <Circle
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke={Colors.progressTrack}
+              strokeWidth={strokeWidth}
+              fill="none"
+            />
+          )}
+          <Circle
+            cx={center}
+            cy={center}
+            r={radius}
+            stroke={color}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={progressOffset}
+            strokeLinecap="round"
+          />
+        </G>
+      </Svg>
+    </View>
+  );
+}
 
 function StatCard({
   title,
@@ -29,26 +88,24 @@ function StatCard({
   unit: string;
   progress?: number;
   color?: string;
-  iconName: IconName;
+  iconName: StatIconName;
 }) {
   return (
-    <View style={[styles.statCard, { width: CARD_WIDTH }]}>
-      <View style={styles.statHeader}>
-        <MaterialCommunityIcons name={iconName} size={18} color={color} style={styles.statIcon} />
+    <View style={styles.statCard}>
+      <View style={styles.statCardContent}>
+        <View style={[styles.iconBadge, { backgroundColor: `${color}15` }]}>
+          <MaterialCommunityIcons name={iconName} size={20} color={color} />
+        </View>
         <Text style={styles.statTitle}>{title}</Text>
-      </View>
-      <View style={styles.statValueRow}>
-        <Text style={[styles.statValue, { color }]}>{value}</Text>
-        <Text style={styles.statUnit}>{unit}</Text>
+        <View style={styles.statValueContainer}>
+          <Text style={[styles.statValue, { color }]}>{value}</Text>
+          <Text style={styles.statUnit}>{unit}</Text>
+        </View>
       </View>
       {progress !== undefined && (
-        <View style={styles.progressBar}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${Math.min(progress, 100)}%`, backgroundColor: color },
-            ]}
-          />
+        <View style={styles.statProgressContainer}>
+          <CircularProgress progress={progress} size={56} strokeWidth={6} color={color} />
+          <Text style={[styles.progressText, { color }]}>{progress}%</Text>
         </View>
       )}
     </View>
@@ -68,21 +125,37 @@ function ReadinessRing({ score }: { score: number }) {
     return 'RECOVERY NEEDED';
   };
 
+  const color = getScoreColor();
+
   return (
-    <View style={styles.readinessContainer}>
-      <View style={[styles.readinessRing, { borderColor: getScoreColor() }]}>
-        <Text style={styles.readinessScore}>{score}</Text>
-        <Text style={styles.readinessLabel}>/ 100</Text>
-      </View>
-      <View style={styles.readinessInfo}>
-        <Text style={styles.readinessTitle}>{getScoreLabel()}</Text>
-        <Text style={styles.readinessDescription}>
-          {score >= 85
-            ? 'Your body is fully recovered. Push for maximum intensity today.'
-            : score >= 70
-            ? 'Good recovery. Moderate intensity recommended.'
-            : 'Consider rest or light activity today.'}
-        </Text>
+    <View style={styles.readinessCard}>
+      <View style={styles.readinessContent}>
+        <View style={styles.readinessRingContainer}>
+          <CircularProgress 
+            progress={score} 
+            size={120} 
+            strokeWidth={10} 
+            color={color} 
+            showDots={true}
+          />
+          <View style={styles.readinessScoreOverlay}>
+            <Text style={styles.readinessScore}>{score}</Text>
+            <Text style={styles.readinessScoreLabel}>/ 100</Text>
+          </View>
+        </View>
+        <View style={styles.readinessInfo}>
+          <View style={[styles.statusBadge, { backgroundColor: `${color}20` }]}>
+            <View style={[styles.statusDot, { backgroundColor: color }]} />
+            <Text style={[styles.statusText, { color }]}>{getScoreLabel()}</Text>
+          </View>
+          <Text style={styles.readinessDescription}>
+            {score >= 85
+              ? 'Your body is fully recovered. Push for maximum intensity today.'
+              : score >= 70
+              ? 'Good recovery. Moderate intensity recommended.'
+              : 'Consider rest or light activity today.'}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -108,19 +181,30 @@ function ContributorItem({
     poor: Colors.error,
   };
 
+  const color = statusColors[status];
+
   return (
-    <View style={styles.contributorItem}>
-      <View style={styles.contributorLeft}>
-        <MaterialCommunityIcons name={iconName} size={18} color={Colors.textSecondary} style={styles.contributorIcon} />
-        <Text style={styles.contributorLabel}>{label}</Text>
+    <View style={styles.contributorCard}>
+      <View style={[styles.contributorIconBadge, { backgroundColor: `${color}15` }]}>
+        <MaterialCommunityIcons name={iconName} size={20} color={color} />
       </View>
-      <View style={styles.contributorRight}>
-        <View style={[styles.statusDot, { backgroundColor: statusColors[status] }]} />
-        <Text style={[styles.contributorValue, { color: statusColors[status] }]}>
-          {value}%
-        </Text>
+      <Text style={styles.contributorLabel}>{label}</Text>
+      <View style={styles.contributorValueContainer}>
+        <CircularProgress progress={value} size={44} strokeWidth={4} color={color} showDots={false} />
+        <Text style={[styles.contributorValue, { color }]}>{value}%</Text>
       </View>
     </View>
+  );
+}
+
+function QuickActionButton({ icon, label, onPress }: { icon: string; label: string; onPress?: () => void }) {
+  return (
+    <TouchableOpacity style={styles.quickActionButton} onPress={onPress}>
+      <View style={styles.quickActionIconContainer}>
+        <Feather name={icon as any} size={20} color={Colors.accent} />
+      </View>
+      <Text style={styles.quickActionLabel}>{label}</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -148,7 +232,10 @@ export default function DashboardScreen() {
     return (
       <View style={styles.loadingContainer}>
         <View style={styles.loadingSpinner}>
-          <Feather name="zap" size={28} color="#FFFFFF" />
+          <CircularProgress progress={75} size={80} strokeWidth={6} color={Colors.accent} />
+          <View style={styles.loadingIconOverlay}>
+            <Feather name="zap" size={24} color={Colors.accent} />
+          </View>
         </View>
         <Text style={styles.loadingText}>Syncing health data...</Text>
       </View>
@@ -157,101 +244,87 @@ export default function DashboardScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.heroSection}>
-        <View style={styles.heroHeader}>
-          <Text style={styles.heroLabel}>LIVE TELEMETRY</Text>
-          <View style={styles.syncBadge}>
-            <View style={styles.syncDot} />
-            <Text style={styles.syncText}>SYNCED</Text>
-          </View>
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.greeting}>Good Morning</Text>
+          <Text style={styles.headerTitle}>Physio Briefing</Text>
         </View>
-        <Text style={styles.heroTitle}>Physio Briefing</Text>
-        <Text style={styles.heroSubtitle}>
-          Core Readiness:{' '}
-          <Text style={styles.heroAccent}>{summary?.readinessScore || 94}%</Text> — CNS
-          Primed
-        </Text>
-      </View>
-
-      <View style={styles.statsGrid}>
-        <StatCard
-          iconName="foot-print"
-          title="STEPS"
-          value={(summary?.steps || 8420).toLocaleString()}
-          unit={`/ ${(summary?.stepsGoal || 10000).toLocaleString()}`}
-          progress={summary?.stepsProgress || 84}
-          color={Colors.accent}
-        />
-        <StatCard
-          iconName="clock-outline"
-          title="ACTIVE"
-          value={summary?.activeMinutes || 45}
-          unit={`/ ${summary?.activeMinutesGoal || 60} min`}
-          progress={summary?.activeMinutesProgress || 75}
-          color={Colors.warning}
-        />
-        <StatCard
-          iconName="sleep"
-          title="SLEEP"
-          value={summary?.sleepHours?.toFixed(1) || '7.2'}
-          unit={`/ ${summary?.sleepGoal || 8} hrs`}
-          progress={summary?.sleepProgress || 90}
-          color="#6366F1"
-        />
-        <StatCard
-          iconName="water-outline"
-          title="HYDRATION"
-          value={((summary?.hydrationMl || 1800) / 1000).toFixed(1)}
-          unit={`/ ${(summary?.hydrationGoal || 2500) / 1000}L`}
-          progress={summary?.hydrationProgress || 72}
-          color="#06B6D4"
-        />
+        <View style={styles.syncBadge}>
+          <View style={styles.syncDot} />
+          <Text style={styles.syncText}>SYNCED</Text>
+        </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>READINESS SCORE</Text>
+        <Text style={styles.sectionTitle}>Today's Stats</Text>
+        <View style={styles.statsGrid}>
+          <StatCard
+            iconName="foot-print"
+            title="Steps"
+            value={(summary?.steps || 8420).toLocaleString()}
+            unit={`/ ${(summary?.stepsGoal || 10000).toLocaleString()}`}
+            progress={summary?.stepsProgress || 84}
+            color={Colors.accent}
+          />
+          <StatCard
+            iconName="clock-outline"
+            title="Active"
+            value={summary?.activeMinutes || 45}
+            unit={`/ ${summary?.activeMinutesGoal || 60} min`}
+            progress={summary?.activeMinutesProgress || 75}
+            color={Colors.warning}
+          />
+          <StatCard
+            iconName="sleep"
+            title="Sleep"
+            value={summary?.sleepHours?.toFixed(1) || '7.2'}
+            unit={`/ ${summary?.sleepGoal || 8} hrs`}
+            progress={summary?.sleepProgress || 90}
+            color="#6366F1"
+          />
+          <StatCard
+            iconName="water-outline"
+            title="Hydration"
+            value={((summary?.hydrationMl || 1800) / 1000).toFixed(1)}
+            unit={`/ ${(summary?.hydrationGoal || 2500) / 1000}L`}
+            progress={summary?.hydrationProgress || 72}
+            color="#06B6D4"
+          />
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Readiness Score</Text>
         <ReadinessRing score={summary?.readinessScore || 94} />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>CONTRIBUTORS</Text>
-        <View style={styles.contributorsCard}>
-          <ContributorItem iconName="sleep" label="Sleep Quality" value={92} status="optimal" />
-          <ContributorItem iconName="heart-pulse" label="Heart Rate" value={88} status="optimal" />
-          <ContributorItem iconName="run" label="Activity Balance" value={85} status="good" />
-          <ContributorItem iconName="restore" label="Recovery Time" value={78} status="good" />
-          <ContributorItem iconName="foot-print" label="Step Count" value={95} status="optimal" />
-          <ContributorItem iconName="water-outline" label="Hydration" value={72} status="fair" />
+        <Text style={styles.sectionTitle}>Contributors</Text>
+        <View style={styles.contributorsGrid}>
+          <ContributorItem iconName="sleep" label="Sleep" value={92} status="optimal" />
+          <ContributorItem iconName="heart-pulse" label="Heart" value={88} status="optimal" />
+          <ContributorItem iconName="run" label="Activity" value={85} status="good" />
+          <ContributorItem iconName="restore" label="Recovery" value={78} status="good" />
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>QUICK ACTIONS</Text>
-        <View style={styles.actionsGrid}>
-          <TouchableOpacity style={styles.actionCard}>
-            <Feather name="droplet" size={24} color={Colors.accent} />
-            <Text style={styles.actionLabel}>Log Water</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
-            <Feather name="target" size={24} color={Colors.accent} />
-            <Text style={styles.actionLabel}>Start Workout</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
-            <Feather name="coffee" size={24} color={Colors.accent} />
-            <Text style={styles.actionLabel}>Log Meal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
-            <Feather name="trending-up" size={24} color={Colors.accent} />
-            <Text style={styles.actionLabel}>View Trends</Text>
-          </TouchableOpacity>
+        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <View style={styles.quickActionsRow}>
+          <QuickActionButton icon="droplet" label="Log Water" />
+          <QuickActionButton icon="target" label="Workout" />
+          <QuickActionButton icon="coffee" label="Log Meal" />
+          <QuickActionButton icon="trending-up" label="Trends" />
         </View>
       </View>
 
       <View style={[styles.section, styles.lastSection]}>
-        <Text style={styles.sectionTitle}>AI INSIGHT</Text>
+        <Text style={styles.sectionTitle}>AI Insight</Text>
         <View style={styles.insightCard}>
           <View style={styles.insightHeader}>
-            <Feather name="cpu" size={20} color={Colors.accent} style={styles.insightIcon} />
+            <View style={styles.insightIconBadge}>
+              <Feather name="cpu" size={18} color={Colors.accent} />
+            </View>
             <View style={styles.insightBadge}>
               <Text style={styles.insightBadgeText}>RECOMMENDATION</Text>
             </View>
@@ -263,6 +336,7 @@ export default function DashboardScreen() {
           </Text>
           <TouchableOpacity style={styles.insightButton}>
             <Text style={styles.insightButtonText}>Apply Suggestion</Text>
+            <Feather name="arrow-right" size={16} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </View>
@@ -282,54 +356,53 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   loadingSpinner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: Colors.accent,
+    position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
-  loadingIcon: {
-    fontSize: 28,
+  loadingIconOverlay: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loadingText: {
     fontSize: FontSizes.md,
     color: Colors.textSecondary,
     fontWeight: '600',
   },
-  heroSection: {
-    padding: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  heroHeader: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
+    alignItems: 'flex-start',
+    padding: Spacing.lg,
+    paddingTop: Spacing.xl,
   },
-  heroLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    color: Colors.accent,
-    letterSpacing: 2,
+  greeting: {
+    fontSize: FontSizes.sm,
+    color: Colors.textSecondary,
+    fontWeight: '500',
+    marginBottom: Spacing.xs,
+  },
+  headerTitle: {
+    fontSize: FontSizes.xxl,
+    fontWeight: '800',
+    color: Colors.primary,
   },
   syncBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.accentLight,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    backgroundColor: Colors.accentMuted,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
   },
   syncDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: Colors.accent,
-    marginRight: Spacing.xs,
+    marginRight: Spacing.sm,
   },
   syncText: {
     fontSize: FontSizes.xs,
@@ -337,235 +410,248 @@ const styles = StyleSheet.create({
     color: Colors.accent,
     letterSpacing: 1,
   },
-  heroTitle: {
-    fontSize: FontSizes.xxxl,
-    fontWeight: '800',
-    fontStyle: 'italic',
+  section: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+  lastSection: {
+    paddingBottom: Spacing.xxl,
+  },
+  sectionTitle: {
+    fontSize: FontSizes.lg,
+    fontWeight: '700',
     color: Colors.primary,
-    marginBottom: Spacing.xs,
-  },
-  heroSubtitle: {
-    fontSize: FontSizes.sm,
-    color: Colors.textSecondary,
-    fontWeight: '600',
-  },
-  heroAccent: {
-    color: Colors.accent,
-    fontWeight: '800',
-    fontStyle: 'italic',
+    marginBottom: Spacing.md,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    padding: Spacing.lg,
     gap: Spacing.md,
   },
   statCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    width: (width - Spacing.lg * 2 - Spacing.md) / 2,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.md,
-  },
-  statHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
+    ...Shadows.md,
   },
-  statIcon: {
-    marginRight: Spacing.xs,
+  statCardContent: {
+    flex: 1,
+  },
+  iconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
   },
   statTitle: {
     fontSize: FontSizes.xs,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textMuted,
-    letterSpacing: 1,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: Spacing.xs,
   },
-  statValueRow: {
+  statValueContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    marginBottom: Spacing.sm,
   },
   statValue: {
-    fontSize: FontSizes.xxl,
+    fontSize: FontSizes.xl,
     fontWeight: '800',
-    fontStyle: 'italic',
   },
   statUnit: {
     fontSize: FontSizes.xs,
     color: Colors.textMuted,
     marginLeft: Spacing.xs,
   },
-  progressBar: {
-    height: 4,
-    backgroundColor: Colors.border,
-    borderRadius: 2,
-    overflow: 'hidden',
+  statProgressContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-  section: {
-    padding: Spacing.lg,
-    paddingTop: 0,
-  },
-  lastSection: {
-    paddingBottom: Spacing.xxl,
-  },
-  sectionTitle: {
+  progressText: {
+    position: 'absolute',
     fontSize: FontSizes.xs,
     fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 2,
-    marginBottom: Spacing.md,
   },
-  readinessContainer: {
+  readinessCard: {
     backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.xl,
+    borderRadius: BorderRadius.xxl,
     padding: Spacing.lg,
+    ...Shadows.lg,
+  },
+  readinessContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  readinessRing: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 4,
+  readinessRingContainer: {
+    position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.lg,
   },
+  readinessScoreOverlay: {
+    position: 'absolute',
+    alignItems: 'center',
+  },
   readinessScore: {
-    fontSize: FontSizes.xxl,
+    fontSize: FontSizes.xxxl,
     fontWeight: '800',
     color: '#FFFFFF',
   },
-  readinessLabel: {
+  readinessScoreLabel: {
     fontSize: FontSizes.xs,
     color: Colors.textSecondaryDark,
   },
   readinessInfo: {
     flex: 1,
   },
-  readinessTitle: {
-    fontSize: FontSizes.md,
-    fontWeight: '800',
-    fontStyle: 'italic',
-    color: '#FFFFFF',
-    marginBottom: Spacing.xs,
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    marginBottom: Spacing.sm,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginRight: Spacing.xs,
+  },
+  statusText: {
+    fontSize: FontSizes.xs,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   readinessDescription: {
     fontSize: FontSizes.sm,
     color: Colors.textSecondaryDark,
     lineHeight: 20,
   },
-  contributorsCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-  },
-  contributorItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  contributorLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  contributorIcon: {
-    marginRight: Spacing.sm,
-  },
-  contributorLabel: {
-    fontSize: FontSizes.sm,
-    color: Colors.text,
-    fontWeight: '500',
-  },
-  contributorRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: Spacing.xs,
-  },
-  contributorValue: {
-    fontSize: FontSizes.sm,
-    fontWeight: '700',
-  },
-  actionsGrid: {
+  contributorsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.md,
   },
-  actionCard: {
-    width: (width - Spacing.lg * 2 - Spacing.md * 3) / 4,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+  contributorCard: {
+    width: (width - Spacing.lg * 2 - Spacing.md) / 2,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.md,
     alignItems: 'center',
+    ...Shadows.sm,
   },
-  actionIcon: {
-    marginBottom: Spacing.xs,
+  contributorIconBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
   },
-  actionLabel: {
+  contributorLabel: {
+    fontSize: FontSizes.sm,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.sm,
+  },
+  contributorValueContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contributorValue: {
+    position: 'absolute',
+    fontSize: FontSizes.xs,
+    fontWeight: '700',
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  quickActionButton: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  quickActionIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.accentMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
+  },
+  quickActionLabel: {
     fontSize: FontSizes.xs,
     fontWeight: '600',
     color: Colors.textSecondary,
-    textAlign: 'center',
   },
   insightCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xxl,
     padding: Spacing.lg,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.accent,
+    ...Shadows.md,
   },
   insightHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
   },
-  insightIcon: {
+  insightIconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.accentMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: Spacing.sm,
   },
   insightBadge: {
     backgroundColor: Colors.accentLight,
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
   },
   insightBadgeText: {
     fontSize: FontSizes.xs,
     fontWeight: '700',
     color: Colors.accent,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
   insightTitle: {
     fontSize: FontSizes.lg,
     fontWeight: '700',
     color: Colors.primary,
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
   insightText: {
     fontSize: FontSizes.sm,
     color: Colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 22,
     marginBottom: Spacing.md,
   },
   insightButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.accent,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    alignSelf: 'flex-start',
+    borderRadius: BorderRadius.full,
+    gap: Spacing.sm,
   },
   insightButtonText: {
-    fontSize: FontSizes.sm,
+    fontSize: FontSizes.md,
     fontWeight: '700',
     color: '#FFFFFF',
   },
