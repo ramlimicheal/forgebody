@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -87,11 +88,13 @@ const MOCK_ACTIVITIES: Activity[] = [
   },
 ];
 
-const MOCK_CHALLENGES: Challenge[] = [
+type ChallengeIconName = 'shoe-print' | 'arm-flex' | 'water';
+
+const MOCK_CHALLENGES: (Omit<Challenge, 'icon'> & { iconName: ChallengeIconName })[] = [
   {
     id: '1',
     name: 'December Step Challenge',
-    icon: '👟',
+    iconName: 'shoe-print',
     participants: 1234,
     progress: 245000,
     goal: 300000,
@@ -101,7 +104,7 @@ const MOCK_CHALLENGES: Challenge[] = [
   {
     id: '2',
     name: 'Workout Warrior',
-    icon: '💪',
+    iconName: 'arm-flex',
     participants: 567,
     progress: 16,
     goal: 20,
@@ -111,7 +114,7 @@ const MOCK_CHALLENGES: Challenge[] = [
   {
     id: '3',
     name: 'Hydration Hero',
-    icon: '💧',
+    iconName: 'water',
     participants: 890,
     progress: 18,
     goal: 25,
@@ -137,11 +140,11 @@ function ActivityCard({ activity }: { activity: Activity }) {
     challenge: '#EC4899',
   };
 
-  const typeIcons = {
-    workout: '💪',
-    achievement: '🏆',
-    milestone: '🎯',
-    challenge: '🔥',
+  const typeIcons: Record<Activity['type'], 'arm-flex' | 'trophy' | 'target' | 'fire'> = {
+    workout: 'arm-flex',
+    achievement: 'trophy',
+    milestone: 'target',
+    challenge: 'fire',
   };
 
   return (
@@ -163,34 +166,34 @@ function ActivityCard({ activity }: { activity: Activity }) {
           </View>
           <Text style={styles.activityTime}>{activity.time}</Text>
         </View>
-        <Text style={styles.activityIcon}>{typeIcons[activity.type]}</Text>
+        <MaterialCommunityIcons name={typeIcons[activity.type]} size={24} color={typeColors[activity.type]} />
       </View>
       <Text style={styles.activityTitle}>{activity.title}</Text>
       <Text style={styles.activityDescription}>{activity.description}</Text>
       <View style={styles.activityActions}>
         <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionIcon}>❤️</Text>
+          <Feather name="heart" size={18} color={Colors.textSecondary} />
           <Text style={styles.actionCount}>{activity.likes}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionIcon}>💬</Text>
+          <Feather name="message-circle" size={18} color={Colors.textSecondary} />
           <Text style={styles.actionCount}>{activity.comments}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionIcon}>↗️</Text>
+          <Feather name="share" size={18} color={Colors.textSecondary} />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-function ChallengeCard({ challenge }: { challenge: Challenge }) {
+function ChallengeCard({ challenge }: { challenge: typeof MOCK_CHALLENGES[0] }) {
   const progress = (challenge.progress / challenge.goal) * 100;
 
   return (
     <TouchableOpacity style={styles.challengeCard}>
       <View style={styles.challengeHeader}>
-        <Text style={styles.challengeIcon}>{challenge.icon}</Text>
+        <MaterialCommunityIcons name={challenge.iconName} size={32} color={Colors.accent} style={styles.challengeIcon} />
         <View style={styles.challengeInfo}>
           <Text style={styles.challengeName}>{challenge.name}</Text>
           <Text style={styles.challengeParticipants}>
@@ -338,28 +341,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingTop: Spacing.xl,
   },
   headerLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    color: Colors.accent,
-    letterSpacing: 2,
-    marginBottom: 2,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
   },
   headerTitle: {
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.xxl,
     fontWeight: '800',
-    fontStyle: 'italic',
     color: Colors.primary,
   },
   shareButton: {
     backgroundColor: Colors.accent,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
   },
   shareButtonText: {
     fontSize: FontSizes.sm,
@@ -368,7 +367,8 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
     gap: Spacing.sm,
   },
   tab: {
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   activeTab: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
   },
   tabText: {
     fontSize: FontSizes.sm,
@@ -396,10 +396,11 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   activityCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
+    ...Shadows.md,
   },
   activityHeader: {
     flexDirection: 'row',
@@ -483,17 +484,17 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.lg,
     fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 2,
+    color: Colors.primary,
     marginBottom: Spacing.md,
   },
   challengeCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
+    ...Shadows.md,
   },
   challengeHeader: {
     flexDirection: 'row',
@@ -546,11 +547,11 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
   },
   browseButton: {
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.cardBackground,
     borderWidth: 2,
     borderColor: Colors.border,
     borderStyle: 'dashed',
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     alignItems: 'center',
   },
@@ -580,9 +581,10 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   leaderboardCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.md,
+    ...Shadows.md,
   },
   leaderboardRow: {
     flexDirection: 'row',

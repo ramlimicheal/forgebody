@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -63,13 +64,15 @@ const MOCK_WORKOUTS: Workout[] = [
   },
 ];
 
-const WORKOUT_TEMPLATES = [
-  { id: '1', name: 'Push Day', exercises: 5, icon: '💪' },
-  { id: '2', name: 'Pull Day', exercises: 5, icon: '🏋️' },
-  { id: '3', name: 'Leg Day', exercises: 6, icon: '🦵' },
-  { id: '4', name: 'Full Body', exercises: 8, icon: '🔥' },
-  { id: '5', name: 'HIIT Cardio', exercises: 4, icon: '⚡' },
-  { id: '6', name: 'Yoga Flow', exercises: 10, icon: '🧘' },
+type TemplateIconName = 'arm-flex' | 'weight-lifter' | 'run-fast' | 'fire' | 'lightning-bolt' | 'meditation';
+
+const WORKOUT_TEMPLATES: { id: string; name: string; exercises: number; iconName: TemplateIconName }[] = [
+  { id: '1', name: 'Push Day', exercises: 5, iconName: 'arm-flex' },
+  { id: '2', name: 'Pull Day', exercises: 5, iconName: 'weight-lifter' },
+  { id: '3', name: 'Leg Day', exercises: 6, iconName: 'run-fast' },
+  { id: '4', name: 'Full Body', exercises: 8, iconName: 'fire' },
+  { id: '5', name: 'HIIT Cardio', exercises: 4, iconName: 'lightning-bolt' },
+  { id: '6', name: 'Yoga Flow', exercises: 10, iconName: 'meditation' },
 ];
 
 function WorkoutCard({ workout }: { workout: Workout }) {
@@ -129,7 +132,7 @@ function WorkoutCard({ workout }: { workout: Workout }) {
 function TemplateCard({ template }: { template: typeof WORKOUT_TEMPLATES[0] }) {
   return (
     <TouchableOpacity style={styles.templateCard}>
-      <Text style={styles.templateIcon}>{template.icon}</Text>
+      <MaterialCommunityIcons name={template.iconName} size={32} color={Colors.accent} />
       <Text style={styles.templateName}>{template.name}</Text>
       <Text style={styles.templateExercises}>{template.exercises} exercises</Text>
     </TouchableOpacity>
@@ -243,28 +246,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingTop: Spacing.xl,
   },
   headerLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    color: Colors.accent,
-    letterSpacing: 2,
-    marginBottom: 2,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
   },
   headerTitle: {
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.xxl,
     fontWeight: '800',
-    fontStyle: 'italic',
     color: Colors.primary,
   },
   logButton: {
     backgroundColor: Colors.accent,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
   },
   logButtonText: {
     fontSize: FontSizes.sm,
@@ -273,7 +272,8 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
     gap: Spacing.sm,
   },
   tab: {
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   activeTab: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
   },
   tabText: {
     fontSize: FontSizes.sm,
@@ -301,10 +301,11 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   workoutCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
+    ...Shadows.md,
   },
   workoutHeader: {
     flexDirection: 'row',
@@ -376,10 +377,11 @@ const styles = StyleSheet.create({
   },
   templateCard: {
     width: (width - Spacing.lg * 2 - Spacing.md) / 2,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     alignItems: 'center',
+    ...Shadows.sm,
   },
   templateIcon: {
     fontSize: 32,
@@ -389,7 +391,8 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     fontWeight: '700',
     color: Colors.primary,
-    marginBottom: 2,
+    marginBottom: Spacing.xs,
+    marginTop: Spacing.sm,
   },
   templateExercises: {
     fontSize: FontSizes.xs,
@@ -399,15 +402,15 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
   },
   statsCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
+    ...Shadows.md,
   },
   statsTitle: {
-    fontSize: FontSizes.sm,
+    fontSize: FontSizes.lg,
     fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 1,
+    color: Colors.primary,
     marginBottom: Spacing.md,
   },
   statsRow: {
@@ -420,18 +423,18 @@ const styles = StyleSheet.create({
   statsValue: {
     fontSize: FontSizes.xxl,
     fontWeight: '800',
-    fontStyle: 'italic',
     color: Colors.accent,
-    marginBottom: 2,
+    marginBottom: Spacing.xs,
   },
   statsLabel: {
     fontSize: FontSizes.xs,
     color: Colors.textMuted,
   },
   muscleCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
+    ...Shadows.md,
   },
   muscleRow: {
     flexDirection: 'row',

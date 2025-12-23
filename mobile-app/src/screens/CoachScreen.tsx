@@ -8,7 +8,8 @@ import {
   TextInput,
   Dimensions,
 } from 'react-native';
-import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -104,14 +105,16 @@ const MOCK_CHAT: ChatMessage[] = [
   },
 ];
 
-const MOCK_PLANS: TrainingPlan[] = [
+type PlanIconName = 'arm-flex' | 'fire' | 'lightning-bolt' | 'sprout';
+
+const MOCK_PLANS: (Omit<TrainingPlan, 'icon'> & { iconName: PlanIconName })[] = [
   {
     id: '1',
     name: 'Strength Building',
     description: 'Progressive overload focused program for building raw strength',
     duration: '12 weeks',
     level: 'Intermediate',
-    icon: '💪',
+    iconName: 'arm-flex',
   },
   {
     id: '2',
@@ -119,7 +122,7 @@ const MOCK_PLANS: TrainingPlan[] = [
     description: 'High-intensity program combining cardio and resistance training',
     duration: '8 weeks',
     level: 'All Levels',
-    icon: '🔥',
+    iconName: 'fire',
   },
   {
     id: '3',
@@ -127,7 +130,7 @@ const MOCK_PLANS: TrainingPlan[] = [
     description: 'Sport-specific training for improved speed, agility, and power',
     duration: '10 weeks',
     level: 'Advanced',
-    icon: '⚡',
+    iconName: 'lightning-bolt',
   },
   {
     id: '4',
@@ -135,7 +138,7 @@ const MOCK_PLANS: TrainingPlan[] = [
     description: 'Foundation program for those new to fitness',
     duration: '6 weeks',
     level: 'Beginner',
-    icon: '🌱',
+    iconName: 'sprout',
   },
 ];
 
@@ -147,17 +150,17 @@ function InsightCard({ insight }: { insight: Insight }) {
     achievement: '#EC4899',
   };
 
-  const typeIcons = {
-    recommendation: '💡',
-    warning: '⚠️',
-    tip: '✨',
-    achievement: '🏆',
+  const typeIcons: Record<Insight['type'], 'lightbulb-on' | 'alert' | 'star' | 'trophy'> = {
+    recommendation: 'lightbulb-on',
+    warning: 'alert',
+    tip: 'star',
+    achievement: 'trophy',
   };
 
   return (
     <View style={[styles.insightCard, { borderLeftColor: typeColors[insight.type] }]}>
       <View style={styles.insightHeader}>
-        <Text style={styles.insightIcon}>{typeIcons[insight.type]}</Text>
+        <MaterialCommunityIcons name={typeIcons[insight.type]} size={24} color={typeColors[insight.type]} />
         <View style={styles.insightMeta}>
           <View style={[styles.typeBadge, { backgroundColor: typeColors[insight.type] + '20' }]}>
             <Text style={[styles.typeBadgeText, { color: typeColors[insight.type] }]}>
@@ -186,7 +189,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
     <View style={[styles.chatBubble, isUser ? styles.userBubble : styles.assistantBubble]}>
       {!isUser && (
         <View style={styles.aiAvatar}>
-          <Text style={styles.aiAvatarText}>🧠</Text>
+          <MaterialCommunityIcons name="brain" size={20} color={Colors.accent} />
         </View>
       )}
       <View style={[styles.bubbleContent, isUser ? styles.userBubbleContent : styles.assistantBubbleContent]}>
@@ -197,10 +200,10 @@ function ChatBubble({ message }: { message: ChatMessage }) {
   );
 }
 
-function PlanCard({ plan }: { plan: TrainingPlan }) {
+function PlanCard({ plan }: { plan: typeof MOCK_PLANS[0] }) {
   return (
     <TouchableOpacity style={styles.planCard}>
-      <Text style={styles.planIcon}>{plan.icon}</Text>
+      <MaterialCommunityIcons name={plan.iconName} size={32} color={Colors.accent} style={styles.planIcon} />
       <View style={styles.planInfo}>
         <Text style={styles.planName}>{plan.name}</Text>
         <Text style={styles.planDescription}>{plan.description}</Text>
@@ -250,21 +253,21 @@ export default function CoachScreen() {
             <Text style={styles.sectionTitle}>TODAY'S FOCUS</Text>
             <View style={styles.focusCard}>
               <View style={styles.focusItem}>
-                <Text style={styles.focusIcon}>💪</Text>
+                <MaterialCommunityIcons name="arm-flex" size={24} color={Colors.accent} style={styles.focusIcon} />
                 <View>
                   <Text style={styles.focusLabel}>Push Day</Text>
                   <Text style={styles.focusDescription}>Recommended based on recovery</Text>
                 </View>
               </View>
               <View style={styles.focusItem}>
-                <Text style={styles.focusIcon}>🍗</Text>
+                <MaterialCommunityIcons name="food-drumstick" size={24} color={Colors.accent} style={styles.focusIcon} />
                 <View>
                   <Text style={styles.focusLabel}>High Protein Day</Text>
                   <Text style={styles.focusDescription}>180g target for muscle synthesis</Text>
                 </View>
               </View>
               <View style={styles.focusItem}>
-                <Text style={styles.focusIcon}>😴</Text>
+                <MaterialCommunityIcons name="sleep" size={24} color={Colors.accent} style={styles.focusIcon} />
                 <View>
                   <Text style={styles.focusLabel}>Sleep by 10:30 PM</Text>
                   <Text style={styles.focusDescription}>Optimize recovery window</Text>
@@ -344,29 +347,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingTop: Spacing.xl,
   },
   headerLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    color: Colors.accent,
-    letterSpacing: 2,
-    marginBottom: 2,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
   },
   headerTitle: {
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.xxl,
     fontWeight: '800',
-    fontStyle: 'italic',
     color: Colors.primary,
   },
   aiActiveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.accentLight,
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.sm,
+    backgroundColor: Colors.accentMuted,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,
   },
   aiActiveDot: {
@@ -374,7 +373,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: Colors.accent,
-    marginRight: Spacing.xs,
+    marginRight: Spacing.sm,
   },
   aiActiveText: {
     fontSize: FontSizes.xs,
@@ -384,7 +383,8 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
     gap: Spacing.sm,
   },
   tab: {
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   activeTab: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
   },
   tabText: {
     fontSize: FontSizes.sm,
@@ -409,10 +409,9 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.lg,
     fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 2,
+    color: Colors.primary,
     marginBottom: Spacing.md,
   },
   todayFocus: {
@@ -420,8 +419,9 @@ const styles = StyleSheet.create({
   },
   focusCard: {
     backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.xxl,
     padding: Spacing.lg,
+    ...Shadows.lg,
   },
   focusItem: {
     flexDirection: 'row',
@@ -445,11 +445,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xxl,
   },
   insightCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     borderLeftWidth: 4,
+    ...Shadows.md,
   },
   insightHeader: {
     flexDirection: 'row',
@@ -497,9 +498,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   actionButton: {
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
     alignSelf: 'flex-start',
   },
   actionButtonText: {
@@ -538,7 +539,7 @@ const styles = StyleSheet.create({
   },
   bubbleContent: {
     maxWidth: '80%',
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.md,
   },
   userBubbleContent: {

@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/colors';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -27,31 +28,33 @@ interface MealGroup {
   meals: Meal[];
 }
 
-const MOCK_MEALS: MealGroup[] = [
+type MealIconName = 'weather-sunset-up' | 'white-balance-sunny' | 'weather-night' | 'cookie';
+
+const MOCK_MEALS: (Omit<MealGroup, 'icon'> & { iconName: MealIconName })[] = [
   {
     type: 'breakfast',
-    icon: '🌅',
+    iconName: 'weather-sunset-up',
     meals: [
       { id: '1', name: 'Oatmeal with Banana & Almonds', time: '07:30', calories: 420, protein: 15, carbs: 65, fat: 12 },
     ],
   },
   {
     type: 'lunch',
-    icon: '☀️',
+    iconName: 'white-balance-sunny',
     meals: [
       { id: '2', name: 'Grilled Chicken Salad', time: '13:00', calories: 550, protein: 45, carbs: 25, fat: 28 },
     ],
   },
   {
     type: 'dinner',
-    icon: '🌙',
+    iconName: 'weather-night',
     meals: [
       { id: '3', name: 'Salmon with Rice & Vegetables', time: '19:30', calories: 500, protein: 34, carbs: 65, fat: 14 },
     ],
   },
   {
     type: 'snack',
-    icon: '🍪',
+    iconName: 'cookie',
     meals: [
       { id: '4', name: 'Protein Shake', time: '10:00', calories: 180, protein: 30, carbs: 8, fat: 3 },
       { id: '5', name: 'Greek Yogurt with Berries', time: '16:00', calories: 200, protein: 18, carbs: 22, fat: 5 },
@@ -106,14 +109,14 @@ function MacroCard({
   );
 }
 
-function MealGroupCard({ group }: { group: MealGroup }) {
+function MealGroupCard({ group }: { group: typeof MOCK_MEALS[0] }) {
   const totalCalories = group.meals.reduce((sum, meal) => sum + meal.calories, 0);
 
   return (
     <View style={styles.mealGroupCard}>
       <View style={styles.mealGroupHeader}>
         <View style={styles.mealGroupLeft}>
-          <Text style={styles.mealGroupIcon}>{group.icon}</Text>
+          <MaterialCommunityIcons name={group.iconName} size={24} color={Colors.accent} style={styles.mealGroupIcon} />
           <View>
             <Text style={styles.mealGroupType}>
               {group.type.charAt(0).toUpperCase() + group.type.slice(1)}
@@ -298,28 +301,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingTop: Spacing.xl,
   },
   headerLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    color: Colors.accent,
-    letterSpacing: 2,
-    marginBottom: 2,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
   },
   headerTitle: {
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.xxl,
     fontWeight: '800',
-    fontStyle: 'italic',
     color: Colors.primary,
   },
   logButton: {
     backgroundColor: Colors.accent,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
   },
   logButtonText: {
     fontSize: FontSizes.sm,
@@ -328,7 +327,8 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
     gap: Spacing.sm,
   },
   tab: {
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   activeTab: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
   },
   tabText: {
     fontSize: FontSizes.sm,
@@ -361,12 +361,14 @@ const styles = StyleSheet.create({
   },
   macroCard: {
     flex: 1,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.md,
+    ...Shadows.sm,
   },
   caloriesCard: {
     backgroundColor: Colors.primary,
+    ...Shadows.lg,
   },
   macroLabel: {
     fontSize: FontSizes.xs,
@@ -426,17 +428,17 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   sectionTitle: {
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.lg,
     fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 2,
+    color: Colors.primary,
     marginBottom: Spacing.md,
   },
   mealGroupCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
     marginBottom: Spacing.md,
+    ...Shadows.md,
   },
   mealGroupHeader: {
     flexDirection: 'row',
@@ -516,9 +518,10 @@ const styles = StyleSheet.create({
   },
   quickFoodCard: {
     width: (width - Spacing.lg * 2 - Spacing.sm * 2) / 3,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.sm,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    ...Shadows.sm,
   },
   quickFoodName: {
     fontSize: FontSizes.xs,

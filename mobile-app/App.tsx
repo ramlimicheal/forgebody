@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Feather } from '@expo/vector-icons';
 import {
   DashboardScreen,
   WorkoutsScreen,
@@ -10,25 +11,31 @@ import {
   CoachScreen,
   DevicesScreen,
 } from './src/screens';
-import { Colors, FontSizes, Spacing } from './src/constants/colors';
+import { Colors, FontSizes, Spacing, BorderRadius } from './src/constants/colors';
 
 const Tab = createBottomTabNavigator();
 
+type FeatherIconName = 'activity' | 'target' | 'coffee' | 'users' | 'cpu' | 'watch' | 'smartphone';
+
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    Dashboard: '📊',
-    Workouts: '💪',
-    Nutrition: '🍎',
-    Social: '👥',
-    Coach: '🧠',
-    Devices: '⌚',
+  const icons: Record<string, FeatherIconName> = {
+    Dashboard: 'activity',
+    Workouts: 'target',
+    Nutrition: 'coffee',
+    Social: 'users',
+    Coach: 'cpu',
+    Devices: 'watch',
   };
+
+  const iconName = icons[name] || 'smartphone';
 
   return (
     <View style={[styles.tabIconContainer, focused && styles.tabIconContainerActive]}>
-      <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>
-        {icons[name] || '📱'}
-      </Text>
+      <Feather 
+        name={iconName} 
+        size={20} 
+        color={focused ? Colors.accent : Colors.textMuted} 
+      />
     </View>
   );
 }
@@ -38,7 +45,7 @@ function Header() {
     <View style={styles.header}>
       <View style={styles.logoContainer}>
         <View style={styles.logoIcon}>
-          <Text style={styles.logoIconText}>⚡</Text>
+          <Feather name="zap" size={18} color="#FFFFFF" />
         </View>
         <Text style={styles.logoText}>FORGEBODY</Text>
       </View>
@@ -90,9 +97,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    backgroundColor: Colors.background,
   },
   logoContainer: {
     flexDirection: 'row',
@@ -100,10 +105,10 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   logoIcon: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     backgroundColor: Colors.accent,
-    borderRadius: 8,
+    borderRadius: BorderRadius.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -119,11 +124,11 @@ const styles = StyleSheet.create({
   syncStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.accentLight,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: 20,
-    gap: Spacing.xs,
+    backgroundColor: Colors.accentMuted,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    gap: Spacing.sm,
   },
   syncDot: {
     width: 8,
@@ -138,36 +143,30 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   tabBar: {
-    backgroundColor: Colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingTop: Spacing.xs,
-    paddingBottom: Spacing.sm,
-    height: 70,
+    backgroundColor: Colors.background,
+    borderTopWidth: 0,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.md,
+    height: 72,
+    elevation: 0,
+    shadowOpacity: 0,
   },
   tabBarLabel: {
     fontSize: 10,
     fontWeight: '600',
-    marginTop: 2,
+    marginTop: Spacing.xs,
   },
   tabBarItem: {
-    paddingVertical: 4,
+    paddingVertical: Spacing.xs,
   },
   tabIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   tabIconContainerActive: {
-    backgroundColor: Colors.accentLight,
-  },
-  tabIcon: {
-    fontSize: 18,
-    opacity: 0.6,
-  },
-  tabIconActive: {
-    opacity: 1,
+    backgroundColor: Colors.accentMuted,
   },
 });
